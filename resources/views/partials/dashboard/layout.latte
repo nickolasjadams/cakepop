@@ -1,0 +1,63 @@
+{var $Session = App\Helpers\Session::class}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{block title}{/block}</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css">
+	<link rel="stylesheet" href="css/styles.css">
+	{block css}{/block}
+
+	<meta name="msapplication-TileImage" content="/images/favicons/win8-tile-144.png"/>
+	<meta name="msapplication-TileColor" content="#1f379d"/>
+	
+	<link rel="shortcut icon" href="/images/favicons/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="/images/favicons/apple-touch-icon-192x192.png" sizes="192x192">
+
+</head>
+
+<body class="loggedin">
+
+	{include 'navigation.latte'}
+
+	<div id="main-wrapper">
+
+
+		<main>
+
+			<header class="header-bar">
+				{block heading}{/block}
+			</header>
+
+			<section class="content">
+
+				{block content}{/block}
+
+			</section>
+		
+		</main>
+		
+		<footer>
+			&copy; 2021 Nick Adams 
+		</footer>
+			
+	</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/scripts.js"></script>
+{block js}{/block}
+</body>
+</html>
+
+{if ($Session::getErrors() > 0)}
+	{$Session::clearErrors()}
+{/if}
+{if ($Session::getSuccesses() > 0)}
+	{$Session::clearSuccesses()}
+{/if}

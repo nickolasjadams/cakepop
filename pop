@@ -1,0 +1,202 @@
+#!/usr/bin/php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+use splitbrain\phpcli\CLI;
+use splitbrain\phpcli\Options;
+use App\Helpers\Path;
+
+class Minimal extends CLI
+{
+    // register options and arguments
+    protected function setup(Options $options)
+    {
+        
+        $options->setHelp('CakePop PHP Micro Framework CLI');
+        $options->registerOption('version', 'print version', 'v');
+
+        $options->registerOption("bake", "Create a variety of useful things. ", "b", true);
+
+        $options->registerArgument("controller", "Create controller(s) \n\tpop --bake controller Cupcake Pie", false);
+        $options->registerArgument("resource-controller", "Create controller(s) with crud signature methods \n\tpop --bake controller Cupcake Pie", false);
+
+        $options->registerArgument("model", "Create model(s) \n\tpop --bake model Cupcake Pie", false);
+        $options->registerArgument("all", "Create controller(s) and model(s) \n\tpop --bake all Cupcake Pie", false);
+        
+        $options->registerArgument("migration", "Create migration(s) \n\tpop --bake migration Cupcake Pie", false);
+
+        $options->registerOption("migrate", "Migrate up or down", "m", true);
+
+        $options->registerArgument("up", "Run migrations \n\tpop --migrate up", false);
+        $options->registerArgument("up", "Rollback migrations \n\tpop --migrate down", false);
+        
+    }
+
+    protected function bakeController($type, $controllers_array) {
+
+        foreach ($controllers_array as $name) {
+            $tmpl = <<<EOT
+            <?php
+
+            namespace App\Controllers;
+
+            class {$name}Controller
+            {
+            EOT;
+                if ($type === 'resource-controller') {
+                    $tmpl .= <<<EOT
+                    
+
+                        /**
+                         * Display a listing of the {$name}.
+                         */
+                        public function index() {
+
+                        }
+
+                        /**
+                         * Show the form for creating a new {$name}.
+                         */
+                        public function create() {
+
+                        }
+
+                        /**
+                         * Store a newly created {$name} in the database.
+                         */
+                        public function store() {
+
+                        }
+
+                        /**
+                         * Display the specified {$name}.
+                         *
+                         * @param  int  \$id
+                         */
+                        public function show(\$id) {
+
+                        }
+
+                        /**
+                         * Show the form for editing the specified {$name}.
+                         *
+                         * @param  int  \$id
+                         */
+                        public function edit(\$id) {
+
+                        }
+
+                        /**
+                         * Update the specified {$name} in the database.
+                         */
+                        public function update() {
+
+                        }
+
+                        /**
+                         * Remove the specified {$name} from the database.
+                         *
+                         * @param  int  \$id
+                         */
+                        public function destroy(\$id) {
+
+                        }
+                    EOT;
+                }
+            $tmpl .= "\n\n}";
+            $filepath = Path::root() . "/app/controllers/{$name}Controller.php";
+            file_put_contents($filepath, $tmpl);
+            $this->success("Created controller at {$filepath}");
+        }
+
+    }
+    protected function bakeModel($models_array) {
+        foreach ($models_array as $name) {
+            $tmpl = <<<EOT
+            <?php
+
+            namespace App\Models;
+
+            class {$name} extends Model
+            {
+
+            }
+            EOT;
+            $filepath = Path::root() . "/app/models/{$name}.php";
+            file_put_contents($filepath, $tmpl);
+            $this->success("Created model at {$filepath}");
+        }
+
+    }
+    protected function bakeMigration($migrations_array) {
+        foreach ($migrations_array as $name) {
+            $cmd = Path::root() . "/vendor/bin/phinx create {$name}";
+            exec($cmd);
+        }
+    }
+    protected function migrateUp()
+    {
+        exec(Path::root() . "/vendor/bin/phinx migrate", $output);
+        foreach ($output as $line) {
+            $this->success($line . "\n");
+        }
+    }
+    protected function migrateDown()
+    {
+        exec(Path::root() . "/vendor/bin/phinx rollback", $output);
+        foreach ($output as $line) {
+            $this->success($line . "\n");
+        }
+    }
+
+    // implement your code
+    protected function main(Options $options)
+    {
+        if ($options->getOpt('version')) {
+            $this->info('1.0.0');
+        
+        // Bake
+        } elseif ($options->getOpt('bake')) {
+            
+            // Controller
+            if ($options->getOpt('bake') === 'controller' || $options->getOpt('bake') === 'resource-controller') {
+
+                $this->bakeController($options->getOpt('bake'), $options->getArgs()); 
+                
+            }
+
+            // Model
+            elseif ($options->getOpt('bake') === 'model') {
+
+                $this->bakeModel($options->getArgs());
+                
+            }
+
+            // All
+            elseif ($options->getOpt('bake') === 'all') {
+                $this->bakeController($options->getOpt('bake'), $options->getArgs()); 
+                $this->bakeModel($options->getArgs());
+            }
+
+            // Migrations
+            elseif ($options->getOpt('bake') === 'migration') {
+                $this->bakeMigration($options->getArgs());
+            }
+            // $this->info(var_dump($options->getOpt('make')));
+            // $this->info(var_dump($options->getArgs()));
+        
+        } elseif ($options->getOpt('migrate')) {
+
+            if ($options->getOpt('migrate') === 'up') {
+                $this->migrateUp();
+            } elseif ($options->getOpt('migrate') === 'down') {
+                $this->migrateDown();
+            }
+
+        } else {
+            echo $options->help();
+        }
+    }
+}
+// execute it
+$cli = new Minimal();
+$cli->run();

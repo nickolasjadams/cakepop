@@ -1,0 +1,61 @@
+{layout 'partials/dashboard/layout.latte'}
+
+{block title}My Account{/block}
+
+{block heading}
+	<h1>Settings</h1>
+	{* {var $back = '/dashboard'}
+	<a class="back" href="{$back}"><i class="fas fa-arrow-circle-left fa-2x"></i></a> *}
+{/block}
+
+{block content}
+	{ifset $errors['db_update']}
+		{bs4_alert("danger", $errors['db_update'])}
+	{elseifset $successes['password_change']}
+		{bs4_alert("success", $successes['password_change'])}
+	{elseifset $successes['info_change']}
+		{bs4_alert("success", $successes['info_change'])}
+	{/ifset}
+
+	<h2>Change Password</h2>
+	<form class="settings-form" action="/my-account-password" method="POST">
+		<div class="form-element {invalid_form_element('old_password')}">
+			<label for="old_password">Old Password <span>* {validate_form('old_password')}</span></label>
+			<input type="password" name="old_password" id="old_password" required>
+		</div>
+		<div class="form-element {invalid_form_element('new_password')}">
+			<label for="new_password">New Password <span>* {validate_form('new_password')}</span></label>
+			<input type="password" name="new_password" id="new_password" required>
+		</div>
+		<div class="form-element {invalid_form_element('confirm_password')}">
+			<label for="confirm_password">Confirm Password <span>* {validate_form('confirm_password')}</span></label>
+			<input type="password" name="confirm_password" id="confirm_password" required>
+		</div>
+		<button type="submit" class="btn btn-primary">Update Password</button>
+	</form>
+
+	<hr>
+
+	<h2>User Info</h2>
+	<form class="settings-form" action="/my-account-info" method="POST">
+		<div class="form-element {invalid_form_element('email')}">
+			<label for="email">Email <span>* {validate_form('email')}</span></label>
+			<input type="email" name="email" id="email" value="{persisted_or_stored('email', $user->email)}" required>
+		</div>
+
+		<div class="form-element {invalid_form_element('first_name')}">
+			<label for="first_name">First Name <span>* {validate_form('first_name')}</span></label>
+			<input type="text" name="first_name" id="first_name" value="{persisted_or_stored('first_name', $user->first_name)}" required>
+		</div>
+
+		<div class="form-element {invalid_form_element('last_name')}">
+			<label for="last_name">Last Name <span>* {validate_form('last_name')}</span></label>
+			<input type="text" name="last_name" id="last_name" value="{persisted_or_stored('last_name', $user->last_name)}" required>
+		</div>
+
+		<button type="submit" class="btn btn-primary">Save</button>
+
+
+	</form>
+
+{/block}

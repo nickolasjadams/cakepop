@@ -1,0 +1,97 @@
+html {
+	background: #fff;
+}
+
+.login {
+
+	background: $primary;
+
+	.tooltip-inner {
+		max-width: 300px;
+		width: 250px;
+		text-align: left;
+	}
+	
+	main {
+		@include flex;
+		flex-flow: column;
+		max-width: 1000px;
+		margin: auto;
+		padding: 20px;
+		min-height: 100vh;
+		align-items: center;
+
+		@include md {
+			flex-flow: row;
+
+		}
+
+		h1, h2, h3 {
+			color: $white;
+		}
+	}
+
+	section {
+		padding: 25px 20px;
+	}
+
+	section.intro {
+		@include flex;
+		flex-flow: column;
+		align-items: center;
+		justify-content: center;
+	    margin-top: -50px;
+
+		.logo {
+			max-width: 50vw;
+		}
+
+		@include md {
+			flex-flow: row;
+		}
+
+	}
+
+	section.form-wrapper {
+
+		max-height: 360px;
+
+		border-radius: 20px;
+		background: #ffffff;
+		// box-shadow:  20px 20px 60px #d9d9d9,
+		             // -20px -20px 60px #ffffff;
+
+		form {
+
+			input {
+				width: 100%;
+			}
+
+		}
+
+	}
+
+	.signup-form-wrapper {
+		max-width: calc(100% - 30px);
+		margin: 0 auto;
+
+		.pw-criteria {
+			border: 1px solid #ddd;
+			height: 8px;
+			width: calc(100% - 50px);
+			margin: 0 -5px 5px 5px;
+		}
+		.pw-hint {
+			width: 45px;
+			text-align: center;
+			margin-top: -8px;
+		}
+	}
+
+	footer {
+		background: $white;
+		width: 100%;
+		padding: 10px;
+	}
+
+}
