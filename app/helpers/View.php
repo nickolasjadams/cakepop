@@ -5,26 +5,35 @@ namespace App\Helpers;
 use App\Helpers\Facades\Log;
 use Exception;
 use Latte;
+use App\App;
 
 class View
 {
     /**
      * Render a specified view.
      * 
-     * @param $resource_view - The name of the view minus '.view.php'
+     * @param $resource_view - The name of the view minus '.latte'
      */
     public static function render($resource_view, $data = [])
     {
-        
+
+        $app = [ 
+            'app' => (Object) [
+                'config' => App::config(),
+                'env' => App::environment()
+            ]
+        ];
+
+        $data = array_merge($app, $data);
+
+        $data = (object) $data;
+        // foreach($data as $key => $value) {
+        //     $$key = $value;
+        // }
+
         $latte = new Latte\Engine;
         $latte->setTempDirectory(Path::root() . '/resources/tmp/latte');
 
-        $data = (object) $data;
-        foreach($data as $key => $value) {
-            $$key = $value;
-        }
-
-        
         try {
             $view_file = Path::root() . '/resources/views/' . $resource_view . '.latte'; 
             if (is_file($view_file)) {
