@@ -9,6 +9,21 @@ use App\App;
 
 class View
 {
+
+    protected static $latte;
+
+    /**
+     * Configure the Latte Engine.
+     */
+    protected static function stirLatte() {
+        self::$latte = new Latte\Engine;
+        $latteTempDir = Path::root() . '/resources/tmp/latte';
+        if (!is_dir($latteTempDir)) {
+            mkdir($latteTempDir, 0774, true);
+        }
+        self::$latte->setTempDirectory($latteTempDir);
+    }
+
     /**
      * Render a specified view.
      * 
@@ -17,46 +32,45 @@ class View
     public static function render($resource_view, $data = [])
     {
 
+        self::stirLatte();
+
         $app = [ 
             'app' => (Object) [
                 'config' => App::config(),
                 'env' => App::environment()
             ]
         ];
-        d($app);
 
         $data = array_merge($app, $data);
-
         $data = (object) $data;
-        // foreach($data as $key => $value) {
-        //     $$key = $value;
-        // }
-
-        $latte = new Latte\Engine;
-        $latteTempDir = Path::root() . '/resources/tmp/latte';
-        if (!is_dir($latteTempDir)) {
-            mkdir($latteTempDir, 0774, true);
-        }
-        $latte->setTempDirectory($latteTempDir);
+        
 
         try {
             $view_file = Path::root() . '/resources/views/' . $resource_view . '.latte'; 
             if (is_file($view_file)) {
-                $latte->render($view_file, $data);
+                self::$latte->render($view_file, $data);
             }
         } catch (Exception $e) {
             Log::debug($e->getMessage());
-            // d($e->getTraceAsString());
-            // header('Location: /', 404);
             if (strcasecmp(getenv('APP_ENV'), 'dev') == 0) {
                 dd($e->getMessage());
             } else {
-                die('404 - Error: View not found');
+                self::notFound();
             }
-            
-            
+                   
         }
+   
+    }
 
-        
+    /**
+     * Set the http response and render a 404.
+     */
+    public static function notFound()
+    {
+        self::stirLatte();
+        http_response_code(404);
+        $view_file = Path::root() . '/resources/views/404.latte'; 
+        self::$latte->render($view_file);
+        die();
     }
 }

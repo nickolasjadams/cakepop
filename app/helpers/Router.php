@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Helpers\Facades\Log;
 use Exception;
+use App\Helpers\View;
 
 class Router
 {
@@ -44,8 +45,7 @@ class Router
                 return $this->routes[$requestType][$uri];
             }
         } else {
-            // TODO offical 404 page.
-            die("TODO: official 404");
+            view::notFound();
         }
     }
 
