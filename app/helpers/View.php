@@ -23,6 +23,7 @@ class View
                 'env' => App::environment()
             ]
         ];
+        d($app);
 
         $data = array_merge($app, $data);
 

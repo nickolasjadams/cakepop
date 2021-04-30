@@ -4,12 +4,8 @@ use App\Helpers\Session;
 
 function d($data = null) {
     if ($data != null) {
-        highlight_string("<?php\n\$data =\n" . var_export($data, true) . ";\n?>");
+        call_user_func_array('dump', $data);
     }
-}
-
-function dd($data = null) {
-    die(d($data));
 }
 
 
@@ -31,15 +27,6 @@ function e($str) {
  */
 function sanitize($str) {
     return trim(htmlspecialchars($str));
-}
-
-/**
- * A templating function that returns an emoji for a boolean value.
- * 
- * @param bool $value
- */
-function boolean_emoji($value) {
-    return ($value) ? '&#9989;' : '&#10060;';
 }
 
 
@@ -127,32 +114,5 @@ function bs4_alert($type, $message) {
 function mock_post($arr) {
     foreach($arr as $key => $value) {
         $_POST[$key] = $value;
-    }
-}
-
-/**
- * Templating function to eacho out a status tag for the invoices list.
- */
-function status_tag($status_text) {
-
-    switch ($status_text) {
-        case 'Paid':
-            echo "<span class='status-btn bg-success'>{$status_text}</span>";
-            break;
-        case 'Due':
-            echo "<span class='status-btn bg-warning'>{$status_text}</span>";
-            break;
-        case 'Overdue':
-            echo "<span class='status-btn bg-danger'>{$status_text}</span>";
-            break;
-        case 'Draft':
-            echo "<span class='status-btn bg-primary'>{$status_text}</span>";
-            break;
-        case 'Unpaid':
-            echo "<span class='status-btn bg-primary'>{$status_text}</span>";
-            break;
-        case 'Cancelled':
-            echo "<span class='status-btn bg-primary'>{$status_text}</span>";
-            break;
     }
 }
