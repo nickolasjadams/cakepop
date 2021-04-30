@@ -32,7 +32,11 @@ class View
         // }
 
         $latte = new Latte\Engine;
-        $latte->setTempDirectory(Path::root() . '/resources/tmp/latte');
+        $latteTempDir = Path::root() . '/resources/tmp/latte';
+        if (!is_dir($latteTempDir)) {
+            mkdir($latteTempDir, 0774, true);
+        }
+        $latte->setTempDirectory($latteTempDir);
 
         try {
             $view_file = Path::root() . '/resources/views/' . $resource_view . '.latte'; 
